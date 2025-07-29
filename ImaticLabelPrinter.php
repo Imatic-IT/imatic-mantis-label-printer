@@ -138,7 +138,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             <link rel="stylesheet" type="text/css" href="' . plugin_file('style.css') . '&v=' . $this->version . '" />';
     }
 
-
     public function getTemplatesPath(): string
     {
         return $templates_dir = __DIR__ . '/templates';

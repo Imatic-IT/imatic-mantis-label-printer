@@ -100,6 +100,16 @@ $templates = plugin_get()->getTemplatesNames();
                                     </h4>
                                 </div>
                                 <div class="space-2"></div>
+
+                                <?php
+                                if (count($templates) == 0) {
+                                    echo '<div class="alert alert-warning">No templates found. Please add templates in the plugin directory.</div>';
+                                } elseif (count($projects) == 0) {
+                                    echo '<div class="alert alert-warning">No projects found. Please create projects in MantisBT.</div>';
+                                }
+                                ?>
+
+
                                 <table class="table table-bordered table-condensed table-striped">
                                     <?php
                                     foreach ($projects as $key => $project) {
