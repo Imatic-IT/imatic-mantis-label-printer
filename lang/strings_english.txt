@@ -1,0 +1,7 @@
+<?php
+
+$s_plugin_ImaticLabelPrinter_title = 'Imatic Label Printer';
+$s_plugin_ImaticLabelPrinter_print_label = 'Print label';
+
+
+
