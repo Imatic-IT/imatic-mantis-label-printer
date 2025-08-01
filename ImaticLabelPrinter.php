@@ -39,6 +39,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             'branding' => 'www.imatic.cz',
             'hotline' => '+420 944 162 732',
             'assigned_templates' => [],
+            'basicAuthEnabled' => false,
         ];
     }
 
