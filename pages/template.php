@@ -1,20 +1,22 @@
 <?php
 
-if ((bool)plugin_config_get('basicAuthEnabled', false) == true) {
 
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        header("Access-Control-Allow-Origin: " . plugin_config_get('niimblueBaseUrl', 'http://localhost:5173'));
-        header("Access-Control-Allow-Methods: GET, OPTIONS");
-        header("Access-Control-Allow-Headers: Authorization, Content-Type");
-        header("Access-Control-Max-Age: 86400");
-        exit(0);
-    }
+header("Access-Control-Allow-Origin: " . plugin_config_get('niimblueBaseUrl', 'http://localhost:5173'));
+header("Access-Control-Allow-Methods: GET, OPTIONS");
+header("Access-Control-Allow-Headers: Authorization, Content-Type");
+header("Access-Control-Max-Age: 86400");
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
+if ((bool)plugin_config_get('basicAuthEnabled', false)) {
 
     $basicAuthUser = plugin_config_get('basicAuth')['username'] ?? '';
     $basicAuthPass = plugin_config_get('basicAuth')['password'] ?? '';
 
     if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] !== $basicAuthUser || $_SERVER['PHP_AUTH_PW'] !== $basicAuthPass) {
-        header("Access-Control-Allow-Origin: " . plugin_config_get('niimblueBaseUrl', 'http://localhost:5173'));
         header('WWW-Authenticate: Basic realm="NiimBlue Access"');
         header('HTTP/1.0 401 Unauthorized');
         echo 'Unauthorized';
