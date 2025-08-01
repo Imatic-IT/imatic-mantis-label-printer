@@ -1,5 +1,11 @@
 <?php
 
+header('Content-Type: text/plain');
+echo "<pre>";
+print_r(getallheaders());
+exit;
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header("Access-Control-Allow-Origin: " . plugin_config_get('niimblueBaseUrl', 'http://localhost:5173'));
     header("Access-Control-Allow-Methods: GET, OPTIONS");
