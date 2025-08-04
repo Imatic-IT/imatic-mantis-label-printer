@@ -28,6 +28,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             ],
             'replacements' => [
                 'bugId',
+                'summary',
                 'bugUrl',
                 'branding',
                 'hotline',
@@ -40,6 +41,9 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             'hotline' => '+420 944 162 732',
             'assigned_templates' => [],
             'basicAuthEnabled' => false,
+            'githubApiUrl' => 'https://api.github.com/repos/Imatic-IT/niimblue-templates/contents',
+            'githubRawBaseUrl' => 'https://raw.githubusercontent.com/Imatic-IT/niimblue-templates/master',
+            'githubToken' => '',
         ];
     }
 
@@ -105,8 +109,9 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         $replacements = plugin_config_get('replacements');
         $bugId = bug_format_id($_GET['id']);
         $mantis_url = config_get_global('path') . 'view.php?id=' . $bugId;
+        $summary = bug_get_field($bugId, 'summary');
 
-        $values = array_map(function ($item) use ($bugId, $mantis_url) {
+        $values = array_map(function ($item) use ($bugId, $mantis_url, $summary) {
             switch ($item) {
                 case 'bugId':
                 case self::NIIMBLUE_QR_CODE:
@@ -117,6 +122,8 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
                     return plugin_config_get('branding');
                 case 'hotline':
                     return plugin_config_get('hotline');
+                case 'summary':
+                    return $summary;
                 default:
                     return '';
             }
@@ -127,8 +134,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         }, $replacements);
 
         $replacements = array_combine($keysWithDelimiters, $values);
-
-        $replacements[self::NIIMBLUE_QR_CODE] = $mantis_url;
 
         return $replacements;
     }
@@ -169,5 +174,53 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         }, $template_files);
 
         return $templates;
+    }
+    public function getTemplatesNamesFromGithub(): array
+    {
+        $githubToken = plugin_config_get('githubToken', '');
+        if (empty($githubToken)) {
+            return [];
+        }
+
+        $apiUrl = plugin_config_get('githubApiUrl');
+
+        $headers = [
+            "User-Agent: NiimBlue-App",
+            "Accept: application/vnd.github.v3+json"
+        ];
+
+        if (!empty($githubToken)) {
+            $headers[] = "Authorization: token $githubToken";
+        }
+
+        $opts = [
+            "http" => [
+                "method" => "GET",
+                "header" => implode("\r\n", $headers)
+            ]
+        ];
+
+        $context = stream_context_create($opts);
+        $response = @file_get_contents($apiUrl, false, $context);
+
+        if ($response === false) {
+            return [];
+        }
+
+        $files = json_decode($response, true);
+
+        if (!is_array($files)) {
+            return [];
+        }
+
+        $templateNames = [];
+
+        foreach ($files as $file) {
+            if (isset($file['name']) && str_ends_with($file['name'], '.json')) {
+                $templateNames[] = pathinfo($file['name'], PATHINFO_FILENAME);
+            }
+        }
+
+        return $templateNames;
     }
 }

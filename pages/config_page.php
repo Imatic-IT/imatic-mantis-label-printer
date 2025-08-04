@@ -19,7 +19,9 @@ $assigned_templates = plugin_config_get('assigned_templates', []);
 $templates_dir = __DIR__ . '/../templates';
 $template_files = glob($templates_dir . '/*.json');
 
-$templates = plugin_get()->getTemplatesNames();
+$templates = plugin_get()->getTemplatesNamesFromGithub();
+// $templates = plugin_get()->getTemplatesNames(); // Uncomment this line if you want to use the local templates
+
 
 ?>
 
@@ -92,6 +94,34 @@ $templates = plugin_get()->getTemplatesNames();
                                                    class="input-sm form-control"
                                                    value="<?php echo plugin_config_get('basicAuth')['password'] ?>"/>
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="category width-40">
+                                            GitHub API URL
+                                        </th>
+                                        <td>
+                                            <input type="text" name="githubApiUrl" class="input-sm form-control"
+                                                    value="<?php echo plugin_config_get('githubApiUrl') ?>"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="category width-40">
+                                            GitHub Raw Base URL
+                                        </th>
+                                        <td>
+                                            <input type="text" name="githubRawBaseUrl" class="input-sm form-control"
+                                                   value="<?php echo plugin_config_get('githubRawBaseUrl') ?>"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="category width-40">
+                                            GitHub Token
+                                        </th>
+                                        <td>
+                                            <input type="password" name="githubToken" class="input-sm form-control"
+                                                   value="<?php echo string_attribute(plugin_config_get('githubToken')) ?>"/>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <div class="widget-header widget-header-small">
                                     <h4 class="widget-title lighter">

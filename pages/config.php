@@ -47,6 +47,10 @@ config_set_if_needed('assigned_templates', gpc_get('assigned_templates'));
 config_set_if_needed('niimblueBaseUrl', gpc_get_string('niimblueBaseUrl'));
 config_set_if_needed('branding', gpc_get_string('branding'));
 config_set_if_needed('hotline', gpc_get_string('hotline'));
+config_set_if_needed('githubApiUrl', gpc_get_string('githubApiUrl'));
+config_set_if_needed('githubRawBaseUrl', gpc_get_string('githubRawBaseUrl'));
+config_set_if_needed('githubToken', gpc_get_string('githubToken'));
+
 form_security_purge('imatic_print_labels_config');
 html_operation_successful($t_redirect_url);
 layout_page_end();
