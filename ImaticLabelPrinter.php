@@ -2,7 +2,7 @@
 
 class ImaticLabelPrinterPlugin extends MantisPlugin
 {
-    CONST NIIMBLUE_QR_CODE = 'QRCode';
+    const NIIMBLUE_QR_CODE = 'QRCode';
 
     public function register()
     {
@@ -44,6 +44,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             'githubApiUrl' => 'https://api.github.com/repos/Imatic-IT/niimblue-templates/contents',
             'githubRawBaseUrl' => 'https://raw.githubusercontent.com/Imatic-IT/niimblue-templates/master',
             'githubToken' => '',
+            'canPushTemplatesAccessLevel' => ADMINISTRATOR
         ];
     }
 
@@ -73,23 +74,39 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
 
     function bug_view_details()
     {
-        if (isset($_GET['id'])) {
-            $assignedTemplates = plugin_config_get('assigned_templates');
-            $projectId = (int)bug_get_field($_GET['id'], 'project_id');
-
-            if (!$this->projectHasAssignedTemplate($projectId)) return;
-            $templateId = htmlspecialchars($assignedTemplates[$projectId], ENT_QUOTES, 'UTF-8');
-
-            $niimblueBaseUrl = $this->getNiimblueBaseUrl();
-
-            $templateUrl = config_get_global('path') . plugin_page('template.php') . '&templateId=' . $templateId . '&id=' . bug_format_id($_GET['id']);
-
-            $data = '{"templateUrl": "' . $templateUrl . '"}';
-
-            $encoded = base64_encode($data);
-            echo '<a id="printLabelsButton" data="' . $encoded . '" target="_blank" href="' . $niimblueBaseUrl . '/?data=' . urlencode($encoded) . '" class="btn btn-primary btn-white btn-round btn-sm">&#128424; Tag</a>';
+        if (!isset($_GET['id'])) {
+            return;
         }
+
+        $bugId = (int)$_GET['id'];
+        $projectId = (int)bug_get_field($bugId, 'project_id');
+        $assignedTemplates = plugin_config_get('assigned_templates');
+
+        if (!$this->projectHasAssignedTemplate($projectId)) {
+            return;
+        }
+
+        $templateId = htmlspecialchars($assignedTemplates[$projectId], ENT_QUOTES, 'UTF-8');
+        $niimBlueBaseUrl = $this->getNiimblueBaseUrl();
+        $canPushTemplates = access_has_global_level(plugin_config_get('canPushTemplatesAccessLevel'));
+
+        $templateUrl = config_get_global('path')
+            . plugin_page('template.php')
+            . '&templateId=' . $templateId
+            . '&id=' . bug_format_id($bugId);
+
+        $jsonData = json_encode([
+            'templateUrl' => $templateUrl,
+            'canPushTemplates' => $canPushTemplates,
+        ]);
+
+        $encodedData = base64_encode($jsonData);
+
+        echo '<a id="printLabelsButton" data="' . $encodedData . '" target="_blank" href="'
+            . $niimBlueBaseUrl . '/?data=' . urlencode($encodedData)
+            . '" class="btn btn-primary btn-white btn-round btn-sm">&#128424; Tag</a>';
     }
+
 
     private function projectHasAssignedTemplate(int $projectId): bool
     {
@@ -175,6 +192,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
 
         return $templates;
     }
+
     public function getTemplatesNamesFromGithub(): array
     {
         $githubToken = plugin_config_get('githubToken', '');
