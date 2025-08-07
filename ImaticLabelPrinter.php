@@ -2,8 +2,6 @@
 
 class ImaticLabelPrinterPlugin extends MantisPlugin
 {
-    const NIIMBLUE_QR_CODE = 'QRCode';
-
     public function register()
     {
         $this->name = 'Imatic Label Printer';
@@ -22,10 +20,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
     {
         return [
             'niimblueBaseUrl' => 'http://localhost:5173',
-            'basicAuth' => [
-                'username' => 'niimTemplater',
-                'password' => 'uSLR8SokEqoFYfX',
-            ],
             'replacements' => [
                 'bugId',
                 'summary',
@@ -40,7 +34,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             'branding' => 'www.imatic.cz',
             'hotline' => '+420 944 162 732',
             'assigned_templates' => [],
-            'basicAuthEnabled' => false,
             'githubApiUrl' => 'https://api.github.com/repos/Imatic-IT/niimblue-templates/contents',
             'githubRawBaseUrl' => 'https://raw.githubusercontent.com/Imatic-IT/niimblue-templates/master',
             'githubToken' => '',
@@ -56,21 +49,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         ];
     }
 
-    public function deepReplacePlaceholders(array $target, array $replacements): array
-    {
-        foreach ($target as $key => $val) {
-            if (is_array($val)) {
-                $target[$key] = $this->deepReplacePlaceholders($val, $replacements);
-            } elseif (is_string($val) && array_key_exists($val, $replacements)) {
-                if (isset($target['type']) && $target['type'] === self::NIIMBLUE_QR_CODE) {
-                    $target['text'] = $replacements[$val];
-                } else {
-                    $target[$key] = $replacements[$val];
-                }
-            }
-        }
-        return $target;
-    }
 
     function bug_view_details()
     {
@@ -90,13 +68,9 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         $niimBlueBaseUrl = $this->getNiimblueBaseUrl();
         $canPushTemplates = access_has_global_level(plugin_config_get('canPushTemplatesAccessLevel'));
 
-        $templateUrl = config_get_global('path')
-            . plugin_page('template.php')
-            . '&templateId=' . $templateId
-            . '&id=' . bug_format_id($bugId);
-
         $jsonData = json_encode([
-            'templateUrl' => $templateUrl,
+            'templateId' => $templateId,
+            'replacements' => $this->getReplacements(),
             'canPushTemplates' => $canPushTemplates,
         ]);
 
@@ -131,7 +105,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
         $values = array_map(function ($item) use ($bugId, $mantis_url, $summary) {
             switch ($item) {
                 case 'bugId':
-                case self::NIIMBLUE_QR_CODE:
                     return $bugId;
                 case 'bugUrl':
                     return $mantis_url;
@@ -159,38 +132,6 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
     {
         echo '<script  src="' . plugin_file('bundle.js') . '&v=' . $this->version . '" defer></script>;
             <link rel="stylesheet" type="text/css" href="' . plugin_file('style.css') . '&v=' . $this->version . '" />';
-    }
-
-    public function getTemplatesPath(): string
-    {
-        return $templates_dir = __DIR__ . '/templates';
-    }
-
-    public function getTemplateFilePaths(): array
-    {
-        return glob($this->getTemplatesPath() . '/*.json');
-    }
-
-    public function getTemplatesFiles(): array
-    {
-        $template_files = $this->getTemplateFilePaths();
-
-        $templates = array_map(function ($path) {
-            return basename($path, '.json');
-        }, $template_files);
-
-        return $templates;
-    }
-
-    public function getTemplatesNames(): array
-    {
-        $template_files = $this->getTemplateFilePaths();
-
-        $templates = array_map(function ($path) {
-            return pathinfo($path, PATHINFO_FILENAME);
-        }, $template_files);
-
-        return $templates;
     }
 
     public function getTemplatesNamesFromGithub(): array

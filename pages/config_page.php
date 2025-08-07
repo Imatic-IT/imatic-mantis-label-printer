@@ -20,7 +20,6 @@ $templates_dir = __DIR__ . '/../templates';
 $template_files = glob($templates_dir . '/*.json');
 
 $templates = plugin_get()->getTemplatesNamesFromGithub();
-// $templates = plugin_get()->getTemplatesNames(); // Uncomment this line if you want to use the local templates
 
 
 ?>
@@ -74,25 +73,6 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
                                         <td>
                                             <input type="text" name="hotline" class="input-sm form-control"
                                                    value="<?php echo plugin_config_get('hotline', '+420 944 162 732') ?>"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="category width-40">
-                                            Basic Auth Username
-                                        </th>
-                                        <td>
-                                            <input type="text" name="basicAuthUsername" class="input-sm form-control"
-                                                   value="<?php echo plugin_config_get('basicAuth')['username'] ?>"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="category width-40">
-                                            Basic Auth Password
-                                        </th>
-                                        <td>
-                                            <input type="password" name="basicAuthPassword"
-                                                   class="input-sm form-control"
-                                                   value="<?php echo plugin_config_get('basicAuth')['password'] ?>"/>
                                         </td>
                                     </tr>
                                     <tr>
