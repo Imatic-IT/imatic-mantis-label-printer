@@ -41,10 +41,6 @@ Example configuration:
 ```php
 [
     'niimblueBaseUrl' => 'http://localhost:5173', // URL of Niimblue renderer
-    'basicAuth' => [
-        'username' => 'niimTemplater',
-        'password' => 'uSLR8SokEqoFYfX',
-    ],
     'replacements' => [
         'bugId',
         'bugUrl',
