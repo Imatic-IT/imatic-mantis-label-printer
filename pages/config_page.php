@@ -81,7 +81,7 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
                                         </th>
                                         <td>
                                             <input type="text" name="githubApiUrl" class="input-sm form-control"
-                                                    value="<?php echo plugin_config_get('githubApiUrl') ?>"/>
+                                                   value="<?php echo plugin_config_get('githubApiUrl') ?>"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -102,6 +102,21 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
                                                    value="<?php echo string_attribute(plugin_config_get('githubToken')) ?>"/>
                                         </td>
                                     </tr>
+<!--                                    TODO: COMMENTED FOR NOW  -->
+<!--                                    <tr>-->
+<!--                                        <th class="category width-40">-->
+<!--                                            Default template-->
+<!--                                        </th>-->
+<!--                                        <td>-->
+<!--                                            <select name="defaultTemplate" class="input-sm form-control">-->
+<!--                                                <option value="-1"></option>-->
+<!--                                                --><?php //foreach ($templates as $template) {
+//                                                    $selected = (plugin_config_get('defaultTemplate') == $template) ? 'selected' : '';
+//                                                    echo '<option value="' . $template . '" ' . $selected . '>' . string_display_line($template) . '</option>';
+//                                                } ?>
+<!--                                            </select>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
                                 </table>
                                 <div class="widget-header widget-header-small">
                                     <h4 class="widget-title lighter">
@@ -125,24 +140,28 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
                                     foreach ($projects as $key => $project) {
                                         ?>
                                         <tr>
-                                            <th class="category width-40">
+                                            <th style="width: 35px;">
+                                                <input type="checkbox" name="assigned_projects[]"
+                                                       value="<?php echo (int)$project['id'] ?>">
+                                            </th>
+                                            <th class=" category width-40">
                                                 <?php echo string_display_line($project['name']) ?>
                                             </th>
                                             <td>
-                                                <select name="assigned_templates[<?php echo (int)$project['id'] ?>]">
-                                                    class="input-sm form-control">
-                                                    <option value="-1"></option>
-                                                    <?php
-                                                    foreach ($templates as $key => $template) {
-                                                        $selected = false;
-                                                        if ($assigned_templates[$project['id']] == $template) {
-                                                            $selected = 'selected';
-                                                        }
+                                                <?php
+                                                $defaultTemplate = plugin_config_get('defaultTemplate') ?? '-1';
+                                                ?>
 
-                                                        echo '<option value="' . $template . '" ' . $selected;
-                                                        echo '>' . string_display_line($template) . '</option>';
-                                                    }
-                                                    ?>
+                                                <select name="assigned_templates[<?php echo (int)$project['id'] ?>]"
+                                                        class="input-sm form-control">
+                                                    <option value="-1"></option>
+                                                    <?php foreach ($templates as $template) {
+                                                        $selected = isset($assigned_templates[$project['id']]) && $assigned_templates[$project['id']] != -1
+                                                            ? (($assigned_templates[$project['id']] == $template) ? 'selected' : '')
+                                                            : (($template == $defaultTemplate) ? 'selected' : '');
+
+                                                        echo '<option value="' . $template . '" ' . $selected . '>' . string_display_line($template) . '</option>';
+                                                    } ?>
                                                 </select>
                                             </td>
                                         </tr>
@@ -150,6 +169,24 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
                                     }
                                     ?>
                                 </table>
+                                <div class="widget-toolbox padding-8 clearfix">
+                                    <div class="form-inline pull-left">
+                                        <label class="inline">
+                                            <input class="ace check_all input-sm" type="checkbox"
+                                                   id="assign_template_select_all" name="assign_template_select_all"
+                                                   value="all"><span
+                                                    class="lbl padding-6"><?php echo lang_get('select_all') ?> </span>
+                                        </label>
+                                        <select name="bulk_assign_template"
+                                                class="input-sm form-control">
+                                            <option value="-1"></option>
+                                            <?php foreach ($templates as $template) {
+                                                echo '<option value="' . $template . '">' . string_display_line($template) . '</option>';
+                                            } ?>
+                                        </select>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="widget-toolbox padding-8 clearfix">
@@ -160,6 +197,7 @@ $templates = plugin_get()->getTemplatesNamesFromGithub();
             </form>
         </div>
     </div>
+
 
 <?php
 layout_page_end();

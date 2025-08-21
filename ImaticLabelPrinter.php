@@ -34,6 +34,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
             'branding' => 'www.imatic.cz',
             'hotline' => '+420 944 162 732',
             'assigned_templates' => [],
+            'defaultTemplate' => '',
             'githubApiUrl' => 'https://api.github.com/repos/Imatic-IT/niimblue-templates/contents',
             'githubRawBaseUrl' => 'https://raw.githubusercontent.com/Imatic-IT/niimblue-templates/master',
             'githubToken' => '',

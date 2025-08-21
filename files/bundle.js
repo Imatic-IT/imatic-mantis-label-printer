@@ -1,15 +1,1 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-
-const newButton = document.querySelector("#printLabelsButton");
-const widgetToolbox = document.querySelector(".widget-toolbox");
-if (newButton && widgetToolbox) {
-    widgetToolbox.appendChild(newButton);
-}
-
-/******/ })()
-;
-//# sourceMappingURL=bundle.js.map
+(()=>{"use strict";const e=document.querySelector("#printLabelsButton"),t=document.querySelector(".widget-toolbox");e&&t&&t.appendChild(e);const c=document.getElementById("assign_template_select_all"),n=document.querySelectorAll('input[name="assigned_projects[]"]');c&&(c.onchange=()=>{const e=c.checked;n.forEach((t=>{t.checked=e}))})})();
