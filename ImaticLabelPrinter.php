@@ -132,7 +132,7 @@ class ImaticLabelPrinterPlugin extends MantisPlugin
     public function layout_body_end_hook($p_event)
     {
         echo '<script  src="' . plugin_file('bundle.js') . '&v=' . $this->version . '" defer></script>;
-            <link rel="stylesheet" type="text/css" href="' . plugin_file('style.css') . '&v=' . $this->version . '" />';
+            <link rel="stylesheet" type="text/css" href="' . plugin_file('styles.css') . '&v=' . $this->version . '" />';
     }
 
     public function getTemplatesNamesFromGithub(): array
